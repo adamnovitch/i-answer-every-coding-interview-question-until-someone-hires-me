@@ -1,21 +1,42 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 char * urlify (const char *string)
 {
-    const char *replacement = "%20";
-    const int offset = sizeof(replacement);
     int leading = 1;
-    int trailing = 0;
-    char *result;
+    int prev_space = 0;
+    char *result = malloc(strlen(string));
+    char *current = result;
     for (int index = 0; index < strlen(string); index++)
     {
         if (leading)
         {
             if (string[index] != ' ')
             {
-                *result = string[index];
+                *(current++) = string[index];
                 leading = 0;
+            }
+        }
+        else
+        {
+            if (string[index] == ' ')
+            {
+                if (!prev_space)
+                {
+                    prev_space = 1;
+                }
+            }
+            else
+            {
+                if (prev_space)
+                {
+                    *(current++) = '%';
+                    *(current++) = '2';
+                    *(current++) = '0';
+                }
+                *(current++) = string[index];
+                prev_space = 0;
             }
         }
     }
@@ -42,13 +63,14 @@ void main ()
     for (int index = 0; index < test_length; index++)
     {
         output = urlify(input[index]);
-        if (output == result[index])
+        // strcmp is negated because we want a nonzero for its boolean
+        if (!strcmp(output,result[index]))
         {
             printf("Test case %d: Correct!\n",index+1);
         }
         else
         {
-            printf("Test case %d: Incorrect!\n",index+1);
+            printf("Test case %d: Incorrect!\n\tExpected: %s %d\n\tActual  : %s %d\n",index+1,result[index],strlen(result[index]),output,strlen(output));
         }
     }
 }
