@@ -3,8 +3,8 @@
 
 int unique (char *input)
 {
-    char characters[255];
-    memset(characters,0,255);
+    char characters[256];
+    memset(characters,0,256);
     int result = 0;
     for (int index = 0; index < strlen(input); index++)
     {
